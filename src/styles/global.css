@@ -1,0 +1,451 @@
+/* ─── Base ──────────────────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --neon-cyan:   #00f5ff;
+    --neon-purple: #bf5af2;
+    --neon-green:  #32d74b;
+    --dark-900:    #050810;
+    --dark-800:    #0a0f1e;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar       { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--dark-900); }
+  ::-webkit-scrollbar-thumb { background: #263354; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00f5ff55; }
+
+  ::selection {
+    background: rgba(0, 245, 255, 0.2);
+    color: #fff;
+  }
+}
+
+@layer components {
+  /* Section container */
+  .section-container {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Neon heading accent */
+  .neon-text {
+    @apply text-neon-cyan animate-glow;
+  }
+
+  /* Glassmorphism card */
+  .glass-card {
+    @apply bg-dark-800/60 backdrop-blur-sm border border-dark-600/70 rounded-xl;
+  }
+
+  /* Section title pattern */
+  .section-title {
+    @apply font-display text-3xl sm:text-4xl font-bold text-white mb-3;
+  }
+  .section-subtitle {
+    @apply text-slate-400 text-base sm:text-lg mb-12;
+  }
+
+  /* Neon button (primary) */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm
+           bg-neon-cyan text-dark-900 hover:bg-neon-cyan/90
+           shadow-neon-cyan hover:shadow-[0_0_32px_rgba(0,245,255,0.5)]
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neon-cyan/50;
+  }
+
+  /* Ghost button (secondary) */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm
+           border border-neon-cyan/40 text-neon-cyan
+           hover:border-neon-cyan hover:bg-neon-cyan/10
+           transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-neon-cyan/30;
+  }
+
+  /* Small icon button */
+  .btn-icon {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
+           border border-dark-500 text-slate-400 hover:text-white hover:border-slate-500
+           transition-all duration-200;
+  }
+
+  /* Skill / stack badge */
+  .skill-badge {
+    @apply px-2.5 py-1 rounded-full text-xs font-mono font-medium
+           bg-dark-700 border border-dark-500 text-slate-300;
+  }
+
+  /* Scroll-reveal for sections */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Scan-line overlay (subtle CRT feel, not distracting) ─────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+/* ─── Print / PDF Export ───────────────────────────────────────────────── */
+/* Deliberately avoids flexbox, CSS columns, :has() and line-clamp — these are
+   known to make Chrome's real print/PDF pipeline render blank pages when
+   combined with page breaks. Plain block/inline layout only, for reliability. */
+@media print {
+  /* Print-safe brand colors (darker, readable on white) */
+  :root {
+    --neon-cyan:   #0055cc;
+    --neon-purple: #6a1bb3;
+    --neon-green:  #1a7a34;
+  }
+
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-color: #d1d5db !important;
+    animation: none !important;
+    transition: none !important;
+    line-height: 1.25 !important;
+    float: none !important;
+  }
+
+  /* Force scroll-reveal content visible regardless of scroll position at print time */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif !important;
+    font-size: 8pt;
+    line-height: 1.25;
+    color: #111 !important;
+    background: white !important;
+  }
+
+  /* Hide non-CV / interactive / decorative elements entirely */
+  #navbar,
+  #particle-canvas,
+  .no-print,
+  .btn-primary,
+  .btn-ghost,
+  .btn-icon,
+  .cta-row,
+  .contact-row,
+  .card-actions,
+  .stats-grid,
+  #filter-bar,
+  footer,
+  svg,
+  .availability-dot {
+    display: none !important;
+  }
+
+  /* No hyperlink styling anywhere — everything reads as plain text */
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+    cursor: default;
+  }
+  /* "Ver programa →" links carry no CV value — remove entirely */
+  .timeline-link {
+    display: none !important;
+  }
+
+  /* Layout: plain document flow, no boxes/cards/flex/grid — CV reads as flowing text blocks */
+  .section-container {
+    max-width: 100% !important;
+    padding: 0 14pt !important;
+  }
+
+  section {
+    page-break-inside: avoid;
+    margin-bottom: 5pt;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: auto !important;
+    display: block !important;
+  }
+
+  /* Strip every "glass card" surface down to plain text (no border/bg/radius/blur) */
+  .glass-card {
+    background: transparent !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Any grid/flex wrapper becomes a simple block — no flexbox anywhere in print */
+  .grid,
+  .flex,
+  .projects-grid {
+    display: block !important;
+  }
+  /* Re-hide stats grid (must win over the generic .grid override above) */
+  .stats-grid {
+    display: none !important;
+  }
+
+  /* Section header wrappers use large screen-only spacing (mb-14/mb-16) — compact for print */
+  .mb-14,
+  .mb-16 {
+    margin-bottom: 4pt !important;
+  }
+
+  /* Section titles get a brand-colored accent, CV-style */
+  .section-title {
+    font-size: 12pt !important;
+    color: var(--neon-cyan) !important;
+    border-bottom: 1pt solid var(--neon-cyan);
+    padding-bottom: 1pt;
+    margin-bottom: 4pt !important;
+  }
+  .section-subtitle {
+    display: none !important;
+  }
+
+  /* Hero → compact CV header */
+  #inicio {
+    padding: 0 0 4pt !important;
+    border-bottom: 1.5pt solid #111;
+    margin-bottom: 5pt;
+  }
+
+  #inicio h1 {
+    font-size: 18pt !important;
+    font-weight: 700;
+    margin-bottom: 1pt !important;
+  }
+
+  #inicio .hero-role {
+    font-size: 10pt !important;
+    margin-bottom: 2pt !important;
+  }
+  #inicio .hero-role .text-neon-cyan   { color: var(--neon-cyan)   !important; }
+  #inicio .hero-role .text-neon-purple { color: var(--neon-purple) !important; }
+
+  #inicio .hero-description {
+    font-size: 8pt !important;
+    max-width: 100% !important;
+    margin-bottom: 2pt !important;
+  }
+
+  /* Print contact bar becomes visible — top of the CV, email / LinkedIn / GitHub as plain text */
+  .print-contact-bar {
+    display: block !important;
+    font-size: 7.5pt;
+    color: #333 !important;
+    margin-top: 2pt;
+  }
+  .print-contact-bar span {
+    display: inline;
+    margin-right: 14pt;
+  }
+
+  /* About Me → condensed bio, no repeated stat numbers already shown elsewhere */
+  #sobre-mi { padding: 0 !important; margin-bottom: 4pt; }
+  #sobre-mi .section-title { display: none !important; }
+  #sobre-mi .bio-text {
+    font-size: 8pt !important;
+    margin-bottom: 2pt !important;
+  }
+
+  .interests-block p { display: none !important; }
+  .interest-row { display: block !important; }
+  .interest-chip {
+    display: inline;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    color: var(--neon-cyan) !important;
+    font-size: 7.5pt !important;
+  }
+  .interest-chip:not(:last-child)::after {
+    content: ' · ';
+    color: #999;
+  }
+
+  .availability-badge {
+    display: block !important;
+    padding: 0 !important;
+    margin-top: 2pt !important;
+  }
+  .availability-badge p { font-size: 7.5pt !important; }
+
+  /* Projects: plain stacked text entries, no card boxes/grid */
+  #proyectos .section-subtitle,
+  #proyectos [role="group"] {
+    display: none !important;
+  }
+  /* "Próximo proyecto" placeholder has no place in a CV */
+  .project-card[data-status="archived"] {
+    display: none !important;
+  }
+
+  .project-card {
+    display: block !important;
+    padding: 0 !important;
+    margin-bottom: 5pt !important;
+    break-inside: avoid;
+  }
+  .project-card > div { display: block !important; }
+
+  .project-card h3 { font-size: 9.5pt; font-weight: 600; margin-bottom: 1pt; }
+  .project-card p  {
+    font-size: 8pt;
+    color: #444 !important;
+    margin-bottom: 1pt;
+  }
+
+  .project-card .text-neon-cyan   { color: var(--neon-cyan)   !important; }
+  .project-card .text-neon-purple { color: var(--neon-purple) !important; }
+  .project-card .text-neon-blue   { color: #0a5fd6 !important; }
+  .project-card .bg-neon-green,
+  .project-card .bg-yellow-400 {
+    background: transparent !important;
+    color: #444 !important;
+  }
+  /* Category/status pills become plain text, no border or fill */
+  .project-card span[class*="rounded-full"] {
+    display: inline;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+  }
+  .skill-row { display: block !important; }
+
+  /* Timeline: consistent one-line header per entry (title, then type + dates, then body) */
+  .timeline-line,
+  .timeline-dot {
+    display: none !important;
+  }
+
+  .timeline-item {
+    display: block !important;
+    padding-left: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 4pt !important;
+    break-inside: avoid;
+  }
+
+  .timeline-header {
+    display: block !important;
+    margin-bottom: 0 !important;
+  }
+  .timeline-title-block { display: block !important; }
+  .timeline-item h3 { font-size: 9pt !important; margin-bottom: 0 !important; }
+  .timeline-item p  {
+    font-size: 8pt !important;
+    margin-bottom: 1pt !important;
+  }
+
+  .timeline-meta {
+    display: block !important;
+    margin-bottom: 1pt !important;
+  }
+  .timeline-type {
+    display: inline;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-size: 7.5pt !important;
+    margin-right: 6pt;
+  }
+  .timeline-dates {
+    font-size: 7.5pt !important;
+    color: #555 !important;
+  }
+  .timeline-item .text-neon-cyan   { color: var(--neon-cyan)   !important; }
+  .timeline-item .text-neon-purple { color: var(--neon-purple) !important; }
+  .timeline-item .text-amber-400   { color: #a3690a !important; }
+
+  .timeline-footer-row {
+    display: block !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+  }
+  .timeline-credential {
+    display: inline;
+    font-size: 7.5pt !important;
+  }
+
+  /* Tech stack: compact bulleted list per category, no dots/icons/pills */
+  .tech-category {
+    display: block !important;
+    padding: 0 !important;
+    break-inside: avoid;
+    margin-bottom: 3pt !important;
+  }
+
+  .tech-category h3 { font-size: 8.5pt !important; margin-bottom: 1pt !important; }
+  .tech-icon { display: none !important; }
+
+  .tech-skill-row {
+    display: block !important;
+    padding-left: 7pt;
+    position: relative;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  .tech-skill-row::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--neon-cyan);
+  }
+  .tech-skill-name {
+    display: inline;
+    font-size: 7.5pt !important;
+  }
+  .tech-skill-dots { display: none !important; }
+
+  .skill-badge {
+    display: inline !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    font-size: 8pt;
+    color: #333 !important;
+  }
+  .skill-badge:not(:last-child)::after {
+    content: ' · ';
+    color: #999;
+  }
+
+  /* Page setup — single continuous flow, minimal margins */
+  @page {
+    margin: 10mm 10mm;
+    size: A4;
+  }
+}

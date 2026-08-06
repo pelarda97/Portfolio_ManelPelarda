@@ -1,0 +1,116 @@
+---
+interface Props {
+  title:          string;
+  description:    string;
+  category:       'web' | 'games' | 'fullstack';
+  stack:          string[];
+  github?:        string;
+  demo?:          string;
+  demoLabel?:     string;
+  status:         'completed' | 'in-progress' | 'archived';
+  featured?:      boolean;
+}
+
+const { title, description, category, stack, github, demo, demoLabel, status, featured } = Astro.props;
+
+const categoryLabel: Record<string, string> = {
+  web:      'Web',
+  games:    'Games',
+  fullstack: 'Full Stack',
+};
+
+const categoryColor: Record<string, string> = {
+  web:      'text-neon-cyan  border-neon-cyan/40  bg-neon-cyan/10',
+  games:    'text-neon-purple border-neon-purple/40 bg-neon-purple/10',
+  fullstack:'text-neon-blue  border-neon-blue/40  bg-neon-blue/10',
+};
+
+const statusDot: Record<string, string> = {
+  completed:   'bg-neon-green',
+  'in-progress': 'bg-yellow-400',
+  archived:    'bg-slate-500',
+};
+---
+
+<article
+  class="project-card group relative glass-card p-6 flex flex-col gap-4
+         hover:border-neon-cyan/40 hover:shadow-card-hover transition-all duration-300
+         hover:-translate-y-1"
+  data-category={category}
+  data-status={status}
+>
+  <!-- Top row: category badge + status dot -->
+  <div class="flex items-center justify-between">
+    <span class={`text-xs font-mono font-semibold px-2.5 py-1 rounded-full border ${categoryColor[category]}`}>
+      {categoryLabel[category]}
+    </span>
+    <div class="flex items-center gap-2">
+      {featured && (
+        <span class="text-xs text-amber-400 font-medium">★ Destacado</span>
+      )}
+      <span class={`w-2 h-2 rounded-full ${statusDot[status]}`} title={status}></span>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <h3 class="font-display text-lg font-bold text-white group-hover:text-neon-cyan transition-colors duration-200">
+    {title}
+  </h3>
+
+  <!-- Description -->
+  <p class="text-slate-400 text-sm leading-relaxed flex-1">
+    {description}
+  </p>
+
+  <!-- Stack — hidden by default, slides in on hover -->
+  <div class="skill-row flex flex-wrap gap-1.5">
+    {stack.slice(0, 5).map(tech => (
+      <span class="skill-badge">{tech}</span>
+    ))}
+    {stack.length > 5 && (
+      <span class="skill-badge text-slate-500">+{stack.length - 5}</span>
+    )}
+  </div>
+
+  <!-- Action buttons -->
+  <div class="card-actions flex items-center gap-2 pt-1 border-t border-dark-600/50">
+    {github && (
+      <a
+        href={github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-icon"
+        aria-label={`Repositorio GitHub de ${title}`}
+      >
+        <!-- GitHub icon -->
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+    )}
+    {demo && (
+      <a
+        href={demo}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-icon hover:text-neon-cyan hover:border-neon-cyan/50"
+        aria-label={`${demoLabel ?? 'Demo'} de ${title}`}
+      >
+        <!-- External link icon -->
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        {demoLabel ?? 'Demo'}
+      </a>
+    )}
+  </div>
+
+  <!-- Hover glow border effect -->
+  <div
+    class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300
+           pointer-events-none ring-1 ring-neon-cyan/30"
+    aria-hidden="true"
+  ></div>
+</article>

@@ -1,0 +1,130 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from '../ui/ProjectCard.astro';
+
+// Fetch and sort all projects
+const allProjects = await getCollection('projects');
+const projects = allProjects.sort((a, b) => {
+  const orderA = a.data.order ?? 99;
+  const orderB = b.data.order ?? 99;
+  return orderA - orderB;
+});
+---
+
+<section
+  id="proyectos"
+  class="py-24 relative"
+  aria-label="Proyectos"
+>
+  <div class="section-container">
+
+    <!-- Section header -->
+    <div class="text-center mb-14 reveal">
+      <p class="font-mono text-xs text-neon-cyan tracking-widest uppercase mb-3">Portfolio</p>
+      <h2 class="section-title">Proyectos Personales</h2>
+      <p class="section-subtitle max-w-xl mx-auto">
+        De aplicaciones web de producción a experiencias jugables en el navegador.
+      </p>
+
+      <!-- Filter bar -->
+      <div id="filter-bar" class="flex items-center justify-center gap-2 mt-6 no-print" role="group" aria-label="Filtrar proyectos">
+        {(['all', 'web', 'games', 'fullstack'] as const).map((f) => (
+          <button
+            class="filter-btn text-xs font-mono font-semibold px-4 py-2 rounded-full border
+                   transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-neon-cyan/40"
+            data-filter={f}
+            aria-pressed={f === 'all' ? 'true' : 'false'}
+          >
+            {f === 'all'      ? 'Todos'      :
+             f === 'web'      ? 'Web'        :
+             f === 'games'    ? 'Juegos'     :
+             'Full Stack'}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Projects grid -->
+    <div
+      id="projects-grid"
+      class="projects-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      aria-live="polite"
+    >
+      {projects.map(p => (
+        <div class="project-wrapper reveal" data-category={p.data.category}>
+          <ProjectCard
+            title={p.data.title}
+            description={p.data.description}
+            category={p.data.category}
+            stack={p.data.stack}
+            github={p.data.github}
+            demo={p.data.demo}
+            demoLabel={p.data.demoLabel}
+            status={p.data.status}
+            featured={p.data.featured}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Empty state (shown when no filter matches) -->
+    <p id="no-results" class="hidden text-center text-slate-500 mt-12 font-mono text-sm">
+      No hay proyectos en esta categoría aún. ¡Vuelve pronto!
+    </p>
+  </div>
+</section>
+
+<script>
+  // ── Filter logic ──────────────────────────────────────────────────────────
+  const filterBtns  = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const wrappers    = document.querySelectorAll<HTMLElement>('.project-wrapper');
+  const noResults   = document.getElementById('no-results')!;
+
+  // Style classes  
+  const ACTIVE   = ['bg-neon-cyan/15', 'border-neon-cyan', 'text-neon-cyan'];
+  const INACTIVE = ['bg-transparent', 'border-dark-500', 'text-slate-400', 'hover:border-slate-400'];
+
+  function applyFilter(filter: string) {
+    let visible = 0;
+
+    wrappers.forEach(w => {
+      const cat     = w.dataset.category ?? '';
+      const matches = filter === 'all' || cat === filter;
+      w.style.display = matches ? '' : 'none';
+      if (matches) visible++;
+    });
+
+    noResults.classList.toggle('hidden', visible > 0);
+
+    filterBtns.forEach(btn => {
+      const active = btn.dataset.filter === filter;
+      btn.setAttribute('aria-pressed', String(active));
+      if (active) {
+        btn.classList.remove(...INACTIVE);
+        btn.classList.add(...ACTIVE);
+      } else {
+        btn.classList.remove(...ACTIVE);
+        btn.classList.add(...INACTIVE);
+      }
+    });
+  }
+
+  // Init: set 'Todos' as active
+  applyFilter('all');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.filter ?? 'all'));
+  });
+
+  // ── Scroll-reveal ─────────────────────────────────────────────────────────
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        (e.target as HTMLElement).classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('#proyectos .reveal').forEach(el => io.observe(el));
+</script>

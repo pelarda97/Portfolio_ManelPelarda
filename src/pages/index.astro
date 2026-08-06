@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+import ParticleBackground from '../components/ui/ParticleBackground.astro';
+import Hero from '../components/sections/Hero.astro';
+import AboutMe from '../components/sections/AboutMe.astro';
+import Projects from '../components/sections/Projects.astro';
+import Timeline from '../components/sections/Timeline.astro';
+import TechStack from '../components/sections/TechStack.astro';
+---
+
+<BaseLayout title="Manel Pelarda — Full-Stack & Game Developer">
+  <!-- Particle canvas (fixed, z-0, pointer-events-none) -->
+  <ParticleBackground />
+
+  <!-- Sticky navbar -->
+  <Navbar />
+
+  <!-- Main content — relative z-10 so it sits above canvas -->
+  <main class="relative z-10">
+    <Hero />
+    <AboutMe />
+    <Projects />
+    <Timeline />
+    <TechStack />
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,87 @@
+---
+import { techStack } from '../../data/profile';
+
+// To add a new skill: just add an entry to the relevant category array in src/data/profile.ts
+const categories = techStack;
+
+// level: 1–5 dots
+---
+
+<section
+  id="stack"
+  class="py-24 relative"
+  aria-label="Stack técnico"
+>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div class="absolute top-1/2 left-0 w-80 h-80 bg-neon-cyan/3 blur-[90px] rounded-full"></div>
+  </div>
+
+  <div class="section-container relative z-10">
+    <!-- Header -->
+    <div class="text-center mb-16 reveal">
+      <p class="font-mono text-xs text-amber-400 tracking-widest uppercase mb-3">Tecnologías</p>
+      <h2 class="section-title">Stack Técnico</h2>
+      <p class="section-subtitle max-w-md mx-auto">
+        Herramientas con las que construyo a diario — tanto en la web como en el juego.
+      </p>
+    </div>
+
+    <!-- Category grid -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {categories.map((cat, ci) => (
+        <div
+          class="tech-category glass-card p-6 reveal"
+          style={`animation-delay: ${ci * 0.08}s`}
+        >
+          <!-- Category header -->
+          <div class="flex items-center gap-2 mb-5">
+            <span class={`tech-icon ${cat.color}`}>
+              <Fragment set:html={cat.icon} />
+            </span>
+            <h3 class={`font-display text-sm font-bold ${cat.color}`}>
+              {cat.label}
+            </h3>
+          </div>
+
+          <!-- Skills list -->
+          <ul class="space-y-3" role="list">
+            {cat.skills.map(skill => (
+              <li class="tech-skill-row flex items-center justify-between gap-2">
+                <span class="tech-skill-name text-sm text-slate-300 font-medium truncate">
+                  {skill.name}
+                </span>
+                <!-- Skill level dots -->
+                <div class="tech-skill-dots flex gap-1 shrink-0" aria-label={`Nivel ${skill.level} de 5`}>
+                  {Array.from({ length: 5 }).map((_, di) => (
+                    <span
+                      class={`w-1.5 h-1.5 rounded-full transition-colors ${
+                        di < skill.level
+                          ? cat.id === 'frontend' ? 'bg-neon-cyan'
+                          : cat.id === 'backend'  ? 'bg-neon-green'
+                          : cat.id === 'gamedev'  ? 'bg-neon-purple'
+                          : 'bg-amber-400'
+                          : 'bg-dark-500'
+                      }`}
+                    ></span>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        (e.target as HTMLElement).classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('#stack .reveal').forEach(el => io.observe(el));
+</script>

@@ -1,0 +1,174 @@
+---
+const navLinks = [
+  { href: '#sobre-mi',  label: 'Sobre mí'  },
+  { href: '#proyectos', label: 'Proyectos'  },
+  { href: '#formacion', label: 'Formación'  },
+  { href: '#stack',     label: 'Stack'      },
+  { href: '#contacto',  label: 'Contacto'   },
+];
+---
+
+<nav
+  id="navbar"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 no-print"
+  aria-label="Navegación principal"
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo / brand -->
+      <a href="#inicio" class="font-mono text-sm font-medium tracking-wider hover:text-white transition-colors duration-200" aria-label="Inicio">
+        <span class="text-slate-500">&lt;</span><!--
+        --><span class="text-neon-cyan">Manel</span><!--
+        --><span class="text-slate-500">.dev /&gt;</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <ul class="hidden md:flex items-center gap-8" role="list">
+        {navLinks.map(link => (
+          <li>
+            <a
+              href={link.href}
+              class="nav-link text-sm font-medium text-slate-400 hover:text-neon-cyan transition-colors duration-200 relative pb-1"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a
+            href="/cv"
+            target="_blank"
+            rel="noopener"
+            class="btn-ghost text-xs !px-4 !py-2"
+            aria-label="Descargar CV en PDF"
+          >
+            <!-- Download icon -->
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            Descargar CV
+          </a>
+        </li>
+      </ul>
+
+      <!-- Mobile menu toggle -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden p-2 text-slate-400 hover:text-white transition-colors rounded-md hover:bg-dark-700"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg id="icon-open"  class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-dark-600/60 bg-dark-900/95 backdrop-blur-lg"
+    role="dialog"
+    aria-label="Menú móvil"
+  >
+    <ul class="px-5 py-4 space-y-1" role="list">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class="mobile-nav-link block py-2.5 text-slate-300 hover:text-neon-cyan text-sm font-medium transition-colors"
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+      <li class="pt-3 border-t border-dark-600/40">
+        <a
+          href="/cv"
+          target="_blank"
+          rel="noopener"
+          class="btn-ghost w-full justify-center text-sm"
+        >
+          Descargar CV
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  // ── Scroll-aware background ───────────────────────────────────────────────
+  const navbar = document.getElementById('navbar')!;
+
+  function updateBg() {
+    if (window.scrollY > 30) {
+      navbar.classList.add('bg-dark-900/90', 'backdrop-blur-lg', 'border-b', 'border-dark-600/40', 'shadow-card');
+    } else {
+      navbar.classList.remove('bg-dark-900/90', 'backdrop-blur-lg', 'border-b', 'border-dark-600/40', 'shadow-card');
+    }
+  }
+  window.addEventListener('scroll', updateBg, { passive: true });
+  updateBg();
+
+  // ── Mobile menu ───────────────────────────────────────────────────────────
+  const btn        = document.getElementById('mobile-menu-btn')!;
+  const menu       = document.getElementById('mobile-menu')!;
+  const iconOpen   = document.getElementById('icon-open')!;
+  const iconClose  = document.getElementById('icon-close')!;
+
+  btn.addEventListener('click', () => {
+    const isOpen = !menu.classList.contains('hidden');
+    menu.classList.toggle('hidden');
+    iconOpen.classList.toggle('hidden');
+    iconClose.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // Close on nav link click
+  document.querySelectorAll('.mobile-nav-link').forEach(el => {
+    el.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // ── Active link highlight via IntersectionObserver ────────────────────────
+  const sections = document.querySelectorAll<HTMLElement>('section[id], footer[id]');
+  const links    = document.querySelectorAll<HTMLAnchorElement>('.nav-link');
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      links.forEach(link => {
+        const active = link.getAttribute('href') === `#${entry.target.id}`;
+        link.classList.toggle('text-neon-cyan',  active);
+        link.classList.toggle('text-slate-400', !active);
+      });
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+
+  sections.forEach(s => obs.observe(s));
+</script>
+
+<style>
+  /* Animated underline on desktop nav links */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -1px;
+    width: 0; height: 1px;
+    background: theme('colors.neon.cyan');
+    transition: width 0.25s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link.text-neon-cyan::after { width: 100%; }
+</style>

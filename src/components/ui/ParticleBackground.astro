@@ -1,0 +1,149 @@
+<!--
+  ParticleBackground.astro
+  Canvas-based particle network — subtle "digital constellation" effect.
+  Pure vanilla JS + Canvas API: zero dependencies, max performance.
+  Demonstrates Game Dev / graphics programming skills.
+-->
+<canvas
+  id="particle-canvas"
+  aria-hidden="true"
+  class="fixed inset-0 w-full h-full pointer-events-none z-0 no-print"
+></canvas>
+
+<script>
+  const canvas  = document.getElementById('particle-canvas') as HTMLCanvasElement;
+  const ctx     = canvas.getContext('2d')!;
+
+  // ── Config ───────────────────────────────────────────────────────────────
+  const CONFIG = {
+    count:         80,       // number of particles
+    maxSpeed:      0.15,
+    minRadius:     1,
+    maxRadius:     2.5,
+    connectDist:   140,      // px — distance to draw connection lines
+    colors:        ['#00f5ff', '#bf5af2', '#0a84ff'],
+    bgColor:       '#050810',
+    lineOpacity:   0.18,
+    particleAlpha: 0.7,
+  } as const;
+
+  // ── State ─────────────────────────────────────────────────────────────────
+  interface Particle {
+    x: number; y: number;
+    vx: number; vy: number;
+    r: number;
+    color: string;
+    alpha: number;
+  }
+
+  let particles: Particle[] = [];
+  let W = 0, H = 0;
+  let rafId = 0;
+  let mouse = { x: -9999, y: -9999 };
+
+  // ── Resize ────────────────────────────────────────────────────────────────
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  // ── Init particles ────────────────────────────────────────────────────────
+  function createParticle(): Particle {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = CONFIG.minRadius + Math.random() * CONFIG.maxSpeed;
+    return {
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      vx:    Math.cos(angle) * speed,
+      vy:    Math.sin(angle) * speed,
+      r:     CONFIG.minRadius + Math.random() * (CONFIG.maxRadius - CONFIG.minRadius),
+      color: CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)],
+      alpha: 0.3 + Math.random() * CONFIG.particleAlpha,
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: CONFIG.count }, createParticle);
+  }
+
+  // ── Draw ──────────────────────────────────────────────────────────────────
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update + draw particles
+    for (const p of particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Bounce off edges
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+
+      // Subtle mouse repulsion (within 100px)
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 100) {
+        const force = (100 - dist) / 100 * 0.4;
+        p.vx += (dx / dist) * force;
+        p.vy += (dy / dist) * force;
+        // Clamp speed
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > 1.2) { p.vx = (p.vx / speed) * 1.2; p.vy = (p.vy / speed) * 1.2; }
+      }
+
+      // Draw particle (glowing dot)
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Draw connecting lines between nearby particles
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a  = particles[i];
+        const b  = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+
+        if (d < CONFIG.connectDist) {
+          const alpha = (1 - d / CONFIG.connectDist) * CONFIG.lineOpacity;
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = a.color;
+          ctx.lineWidth   = 0.7;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  // ── Events ────────────────────────────────────────────────────────────────
+  window.addEventListener('resize',      resize,  { passive: true });
+  window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+  window.addEventListener('mouseleave', ()  => { mouse.x = -9999; mouse.y = -9999; });
+
+  // Pause when tab is hidden (save CPU/battery)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { cancelAnimationFrame(rafId); }
+    else { draw(); }
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────────────────
+  init();
+  draw();
+</script>

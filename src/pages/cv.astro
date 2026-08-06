@@ -1,0 +1,165 @@
+---
+// Standalone, print-safe CV page. Deliberately simple markup (no dark theme,
+// no scroll-reveal JS, minimal flex) — pulls from the same content collections
+// and shared profile data as the portfolio, so it never goes out of sync.
+import { getCollection } from 'astro:content';
+import { profile, techStack } from '../data/profile';
+
+const allProjects = (await getCollection('projects'))
+  .filter(p => p.data.status !== 'archived')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+
+const allEducation = (await getCollection('education'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const typeLabel: Record<string, string> = {
+  degree: 'Grado',
+  course: 'Curso',
+  certification: 'Certificación',
+  bootcamp: 'Bootcamp',
+  'self-taught': 'Autoaprendizaje',
+};
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{profile.name} — CV</title>
+  <style>
+    :root {
+      --cyan: #0055cc;
+      --purple: #6a1bb3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11px;
+      line-height: 1.35;
+      color: #111;
+      background: #fff;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 { font-size: 24px; margin: 0 0 2px; }
+    h2 {
+      font-size: 14px;
+      color: var(--cyan);
+      border-bottom: 1px solid var(--cyan);
+      padding-bottom: 2px;
+      margin: 14px 0 6px;
+    }
+    h3 { font-size: 12px; margin: 0 0 1px; }
+    p { margin: 0 0 4px; }
+    a { color: inherit; text-decoration: none; }
+    .no-print { }
+    .role { font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+    .role .cyan { color: var(--cyan); }
+    .role .purple { color: var(--purple); }
+    .contact { font-size: 10px; color: #333; margin-bottom: 4px; font-weight: 700; }
+    .contact span { margin-right: 14px; }
+    header { border-bottom: 1.5px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
+    .entry { margin-bottom: 8px; }
+    .entry-meta { font-size: 9.5px; color: #555; }
+    .entry-desc { font-size: 10px; color: #444; }
+    .badge { display: inline; font-size: 9.5px; color: #333; }
+    .badge:not(:last-child)::after { content: ' · '; color: #999; }
+    ul { margin: 0; padding: 0; list-style: none; }
+    .skill-list li { padding-left: 10px; position: relative; font-size: 10px; margin-bottom: 1px; }
+    .skill-list li::before { content: '•'; position: absolute; left: 0; color: var(--cyan); }
+    .stack-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .entry-title { font-weight: 600; font-size: 12.5px; }
+    .interests span { font-size: 10px; color: var(--cyan); }
+    .interests span:not(:last-child)::after { content: ' · '; color: #999; }
+    .print-btn {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 8px 16px;
+      background: var(--cyan);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { padding: 0; max-width: 100%; }
+      @page { size: A4; margin: 10mm; }
+    }
+  </style>
+</head>
+<body>
+  <button class="print-btn no-print" onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+  <header>
+    <h1>{profile.name}</h1>
+    <p class="role">
+      <span class="cyan">{profile.roleMain}</span> &amp; <span class="purple">{profile.roleAlt}</span>
+    </p>
+    <p class="entry-desc">{profile.heroDescription}</p>
+    <p class="contact">
+      <span>Email: {profile.email}</span>
+      <span>LinkedIn: {profile.linkedinLabel}</span>
+      <span>GitHub: {profile.githubLabel}</span>
+    </p>
+  </header>
+
+  <section>
+    <h2>Sobre mí</h2>
+    <p class="entry-desc">{profile.bio}</p>
+    <p class="interests">
+      {profile.interests.map(i => <span>{i.label}</span>)}
+    </p>
+  </section>
+
+  <section>
+    <h2>Proyectos</h2>
+    {allProjects.map(p => (
+      <div class="entry">
+        <h3 class="entry-title">{p.data.title}</h3>
+        <p class="entry-desc">{p.data.description}</p>
+        <p>
+          {p.data.stack.map(tech => <span class="badge">{tech}</span>)}
+        </p>
+      </div>
+    ))}
+  </section>
+
+  <section>
+    <h2>Formación</h2>
+    {allEducation.map(item => (
+      <div class="entry">
+        <h3 class="entry-title">{item.data.title}</h3>
+        <p class="entry-meta">
+          {item.data.institution}
+          {item.data.location && ` · ${item.data.location}`}
+          {' — '}{typeLabel[item.data.type]}
+          {' — '}{item.data.startDate}{item.data.current ? ' → Presente' : item.data.endDate ? ` → ${item.data.endDate}` : ''}
+        </p>
+        <p class="entry-desc">{item.data.description}</p>
+        {item.data.skills && item.data.skills.length > 0 && (
+          <p>{item.data.skills.map(s => <span class="badge">{s}</span>)}</p>
+        )}
+        {item.data.credential && <p class="entry-meta">{item.data.credential}</p>}
+      </div>
+    ))}
+  </section>
+
+  <section>
+    <h2>Stack Técnico</h2>
+    <div class="stack-grid">
+      {techStack.map(cat => (
+        <div class="entry">
+          <h3 class="entry-title">{cat.label}</h3>
+          <ul class="skill-list">
+            {cat.skills.map(s => <li>{s.name}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</body>
+</html>
