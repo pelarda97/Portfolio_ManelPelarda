@@ -4,7 +4,6 @@ import tailwind from '@astrojs/tailwind';
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind()],
-  // Update 'site' with your production URL once deployed
-  site: 'https://yourportfolio.dev',
+  site: 'https://portfolio-manel-pelarda.vercel.app',
   compressHTML: true,
 });
