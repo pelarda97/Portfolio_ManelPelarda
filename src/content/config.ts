@@ -35,6 +35,7 @@ const education = defineCollection({
     skills:      z.array(z.string()).optional(),
     link:        z.string().url().optional(),
     credential:  z.string().optional(),
+    credentialUrl: z.string().url().optional(),
     order:       z.number(),
   }),
 });

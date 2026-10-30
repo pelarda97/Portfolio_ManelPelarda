@@ -10,7 +10,7 @@ description: "Ciberseguridad aplicada a entornos industriales y de tecnología d
 skills: ["Ciberseguridad", "OT/ICS Security", "Análisis de vulnerabilidades", "Infraestructuras críticas", "Normativa NIS2"]
 link: "https://www.academiavirensis.es"
 credential: "Certificado Academia Virensis"
-order: 2
+order: 3
 ---
 
 Formación especializada en el ámbito de la ciberseguridad industrial, cubriendo amenazas específicas de entornos OT e ICS y metodologías de protección de infraestructuras críticas.

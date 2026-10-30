@@ -10,7 +10,7 @@ description: "Primeros pasos en el desarrollo de aplicaciones con IA: integraci�
 skills: ["LLMs", "Prompt Engineering", "APIs de IA", "Automatización", "Integración de IA en apps"]
 link: "https://www.bigschool.es"
 credential: "Certificado BIG School"
-order: 4
+order: 5
 ---
 
 Curso de iniciación al mundo del desarrollo asistido por IA, con foco en integración práctica de modelos de lenguaje en aplicaciones reales. Punto de partida de mi exploración en el área de IA y LLMs.

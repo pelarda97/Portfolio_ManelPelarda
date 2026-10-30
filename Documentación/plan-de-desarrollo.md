@@ -94,7 +94,8 @@ Un portfolio de una sola página (SPA feel) que sirve a la vez como:
 - [x] 7 entradas reales en `src/content/education/`:
   - Completadas: Diseño Web Responsivo (freeCodeCamp), Ciberseguridad Avanzada en Entornos OT (Academia Virensis), Elements of AI (Universidad de Helsinki), Iniciación al Desarrollo con IA (BIG School)
   - **Programa de Aceleración y Publishing de Videojuegos (EOI) — marcado como completado (Jul 2026)**. Certificado aún no emitido: el campo `credential` queda comentado en el frontmatter (`# credential: ...`) listo para descomentar y rellenar en cuanto la EOI lo entregue
-  - En curso: Automatización con n8n y Agentes de IA (Udemy), Máster en Programación de Videojuegos con Unity 6 y C# (Udemy)
+  - **Máster en Programación de Videojuegos con Unity 6 y C# (Udemy) — completado (May–Oct 2026)**, situado en 2ª posición de la lista. Certificado enlazado mediante el campo `credentialUrl` (nuevo en el schema: convierte el texto de `credential` en enlace en la web y en `/cv`)
+  - En curso: Automatización con n8n y Agentes de IA (Udemy)
 - [x] Orden cronológico revisado (campo `order`)
 
 **Pendiente / decisión aplazada:**

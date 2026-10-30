@@ -135,22 +135,28 @@ Fecha aprox.:    Abril 2026 (publicado Julio 2026)
    Tipo:         certification
    Período:      Ago–Oct 2025
 
-2. Ciberseguridad Avanzada en Entornos OT
+2. Máster en Programación de Videojuegos con Unity 6 y C#
+   Institución:  Udemy
+   Tipo:         course
+   Período:      May–Oct 2026
+   Certificado:  https://www.udemy.com/certificate/UC-d51a6efc-c82e-447a-b0ca-bbea03ab7f3d/
+
+3. Ciberseguridad Avanzada en Entornos OT
    Institución:  Academia Virensis
    Tipo:         certification
    Período:      May–Jul 2025
 
-3. Elements of AI
+4. Elements of AI
    Institución:  Universidad de Helsinki
    Tipo:         certification
    Período:      Sep–Oct 2025
 
-4. Iniciación al Desarrollo con IA
+5. Iniciación al Desarrollo con IA
    Institución:  BIG School
    Tipo:         course
    Período:      Oct 2025
 
-5. Programa de Aceleración y Publishing de Videojuegos
+6. Programa de Aceleración y Publishing de Videojuegos
    Institución:  EOI Escuela de Organización Industrial
    Tipo:         course
    Período:      2026 — Jul 2026
@@ -160,11 +166,7 @@ Fecha aprox.:    Abril 2026 (publicado Julio 2026)
 ### Cursos en curso
 
 ```
-6. Automatización con n8n y Creación de Agentes de IA
-   Institución:  Udemy
-   Período:      2026 — en curso
-
-7. Máster en Programación de Videojuegos con Unity 6 y C#
+7. Automatización con n8n y Creación de Agentes de IA
    Institución:  Udemy
    Período:      2026 — en curso
 ```

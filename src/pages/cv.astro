@@ -143,7 +143,13 @@ const typeLabel: Record<string, string> = {
         {item.data.skills && item.data.skills.length > 0 && (
           <p>{item.data.skills.map(s => <span class="badge">{s}</span>)}</p>
         )}
-        {item.data.credential && <p class="entry-meta">{item.data.credential}</p>}
+        {item.data.credential && (
+          <p class="entry-meta">
+            {item.data.credentialUrl
+              ? <a href={item.data.credentialUrl} target="_blank" rel="noopener noreferrer">{item.data.credential}: {item.data.credentialUrl}</a>
+              : item.data.credential}
+          </p>
+        )}
       </div>
     ))}
   </section>

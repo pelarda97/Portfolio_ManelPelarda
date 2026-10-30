@@ -383,6 +383,7 @@ body::after {
     font-size: 7.5pt !important;
     color: #555 !important;
   }
+  .timeline-dates > span { display: inline !important; }
   .timeline-item .text-neon-cyan   { color: var(--neon-cyan)   !important; }
   .timeline-item .text-neon-purple { color: var(--neon-purple) !important; }
   .timeline-item .text-amber-400   { color: #a3690a !important; }

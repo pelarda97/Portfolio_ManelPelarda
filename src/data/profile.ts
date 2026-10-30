@@ -16,7 +16,7 @@ export const profile = {
   stats: [
     { value: '+10',  label: 'meses\nfreelance'         },
     { value: '2',    label: 'proyectos en\nproducción'  },
-    { value: '4',    label: 'cursos\ncertificados'      },
+    { value: '5',    label: 'cursos\ncertificados'      },
     { value: '2',    label: 'proyectos en\ndesarrollo'   },
   ],
   interests: [
